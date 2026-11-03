@@ -50,7 +50,7 @@
   const loading = document.getElementById("loading");
   const err = document.getElementById("err");
   const mobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-  const v = "20261103b";   // bump to make phones fetch a new build
+  const v = "20261103c";   // bump to make phones fetch a new build
   const config = {
     dataUrl: "Build/gamedata.wasm?v=" + v,
     frameworkUrl: "Build/gameframework.wasm?v=" + v,
@@ -58,7 +58,7 @@
     streamingAssetsUrl: "StreamingAssets",
     companyName: "Plushville",
     productName: "Плюшвиль",
-    productVersion: "0.3",
+    productVersion: "0.4",
     devicePixelRatio: mobile ? Math.min(window.devicePixelRatio || 1, 2) : undefined,
     showBanner: (msg, type) => { if (type === "error") { err.style.display = "block"; err.textContent = msg; } },
   };
