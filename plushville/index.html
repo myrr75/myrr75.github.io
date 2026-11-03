@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Плюшвиль</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Плюшвиль">
+<meta name="theme-color" content="#F7B6CF">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="manifest" href="manifest.webmanifest">
+<style>
+  :root { --pink: #F59AB5; --ink: #66423A; --bg: #FCE3EA; }
+  html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; background: var(--bg); touch-action: none;
+    -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; overscroll-behavior: none; }
+  body { font-family: "Arial Rounded MT Bold", system-ui, -apple-system, sans-serif; color: var(--ink); }
+  #game { position: fixed; inset: 0; width: 100vw; height: 100vh; height: 100dvh; display: block; background: #F8DCD4; }
+  #loading { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 22px;
+    background: radial-gradient(circle at 50% 40%, #FFF3F6 0%, var(--bg) 70%); transition: opacity .4s; z-index: 2; }
+  #loading img { width: min(28vmin, 160px); border-radius: 22%; box-shadow: 0 10px 30px rgba(200, 90, 130, .25); animation: hop 1s ease-in-out infinite; }
+  #loading h1 { margin: 0; font-size: clamp(34px, 8vmin, 70px); font-weight: 900; color: #fff;
+    text-shadow: 0 3px 0 #D9708F, 2px 2px 0 #D9708F, -2px 2px 0 #D9708F; }
+  @keyframes hop { 0%,100% { transform: translateY(0) rotate(-4deg); } 50% { transform: translateY(-12px) rotate(4deg); } }
+  .bar { width: min(70vw, 420px); height: 20px; border-radius: 999px; background: #fff; box-shadow: inset 0 0 0 3px #F7C4D3; overflow: hidden; }
+  .bar i { display: block; height: 100%; width: 0%; border-radius: 999px; background: linear-gradient(#FFB3C9, var(--pink)); transition: width .2s; }
+  #rotate { position: fixed; inset: 0; display: none; flex-direction: column; align-items: center; justify-content: center; gap: 18px;
+    background: var(--bg); z-index: 3; text-align: center; padding: 16px; font-size: 22px; font-weight: 800; }
+  #rotate .phone { width: 64px; height: 110px; border: 6px solid var(--pink); border-radius: 16px; animation: turn 1.8s ease-in-out infinite; }
+  @keyframes turn { 0%,30% { transform: rotate(0); } 60%,100% { transform: rotate(-90deg); } }
+  @media (orientation: portrait) and (pointer: coarse) { #rotate { display: flex; } }
+  #err { display: none; position: fixed; left: 16px; right: 16px; bottom: 16px; background: #fff; border-radius: 16px; padding: 14px; z-index: 4;
+    box-shadow: 0 6px 20px rgba(0,0,0,.15); font-size: 15px; }
+</style>
+</head>
+<body>
+<canvas id="game" tabindex="-1"></canvas>
+<div id="loading">
+  <img src="icon-512.png" alt="">
+  <h1>Плюшвиль</h1>
+  <div class="bar"><i id="fill"></i></div>
+</div>
+<div id="rotate"><div class="phone"></div><div>Поверни телефон боком</div></div>
+<div id="err"></div>
+<script>
+  const canvas = document.getElementById("game");
+  const fill = document.getElementById("fill");
+  const loading = document.getElementById("loading");
+  const err = document.getElementById("err");
+  const mobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  const v = "20261103";   // bump to make phones fetch a new build
+  const config = {
+    dataUrl: "Build/gamedata.wasm?v=" + v,
+    frameworkUrl: "Build/gameframework.wasm?v=" + v,
+    codeUrl: "Build/gamecode.wasm?v=" + v,
+    streamingAssetsUrl: "StreamingAssets",
+    companyName: "Plushville",
+    productName: "Плюшвиль",
+    productVersion: "0.3",
+    devicePixelRatio: mobile ? Math.min(window.devicePixelRatio || 1, 2) : undefined,
+    showBanner: (msg, type) => { if (type === "error") { err.style.display = "block"; err.textContent = msg; } },
+  };
+  canvas.addEventListener("touchmove", e => e.preventDefault(), { passive: false });
+  document.addEventListener("gesturestart", e => e.preventDefault());
+  const s = document.createElement("script");
+  s.src = "Build/loader.js?v=" + v;
+  s.onload = () => {
+    createUnityInstance(canvas, config, p => { fill.style.width = Math.round(p * 100) + "%"; })
+      .then(() => { loading.style.opacity = 0; setTimeout(() => loading.remove(), 450); })
+      .catch(m => { err.style.display = "block"; err.textContent = "Не получилось запустить: " + m; });
+  };
+  s.onerror = () => { err.style.display = "block"; err.textContent = "Не удалось загрузить игру. Проверь интернет и открой ещё раз."; };
+  document.body.appendChild(s);
+</script>
+</body>
+</html>

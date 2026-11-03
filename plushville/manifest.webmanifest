@@ -1,0 +1,14 @@
+{
+  "name": "Плюшвиль",
+  "short_name": "Плюшвиль",
+  "start_url": "./",
+  "scope": "./",
+  "display": "fullscreen",
+  "orientation": "landscape",
+  "background_color": "#FCE3EA",
+  "theme_color": "#F7B6CF",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}
